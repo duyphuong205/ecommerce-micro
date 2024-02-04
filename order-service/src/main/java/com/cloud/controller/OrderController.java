@@ -1,5 +1,6 @@
 package com.cloud.controller;
 
+import com.cloud.constants.CommonConstant;
 import com.cloud.dto.OrderRequest;
 import com.cloud.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +24,12 @@ public class OrderController {
     public ResponseEntity<?> doCreate(@RequestBody OrderRequest orderRequest) {
         try {
             log.info("----------CREATE ORDER------------");
-            
-            return new ResponseEntity<>(orderService.create(orderRequest), HttpStatus.CREATED);
+            String createdOrder = orderService.create(orderRequest);
+            if (CommonConstant.SUCCESS.equals(createdOrder)) {
+                return new ResponseEntity<>("Order Placed Successfully!", HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>("Product is not in stock, please try again later!", HttpStatus.OK);
+            }
         } catch (Exception ex) {
             log.error("----------ERROR CREATE ORDER------------", ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

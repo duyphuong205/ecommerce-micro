@@ -1,5 +1,6 @@
 package com.cloud.service.impl;
 
+import com.cloud.constants.CommonConstant;
 import com.cloud.dto.OrderRequest;
 import com.cloud.entity.Order;
 import com.cloud.entity.OrderLineItems;
@@ -42,9 +43,9 @@ public class OrderServiceImpl implements OrderService {
 
         if (isInStock) {
             orderRepo.save(order);
-            return "Order Placed Successfully!";
+            return CommonConstant.SUCCESS;
         } else {
-            return "Product is not in stock, please try agian later!";
+            return CommonConstant.FAIL;
         }
     }
 }
