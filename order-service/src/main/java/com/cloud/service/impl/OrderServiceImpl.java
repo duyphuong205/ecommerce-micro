@@ -9,6 +9,7 @@ import com.cloud.utils.ConvertObjectUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,8 +21,10 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepo orderRepo;
 
+    private final WebClient webClient;
+
     @Override
-    public void create(OrderRequest orderRequest) throws Exception {
+    public String create(OrderRequest orderRequest) throws Exception {
         List<OrderLineItems> orderLineItems = orderRequest.getOrderResponseList()
                 .stream().map(item -> ConvertObjectUtils.mapToEntity(item, OrderLineItems.class)).toList();
 
@@ -30,6 +33,18 @@ public class OrderServiceImpl implements OrderService {
                 .orderLineItems(orderLineItems)
                 .build();
 
-        orderRepo.save(order);
+        // call inventory-service, and place order if product is in stock
+        Boolean isInStock = webClient.get()
+                .uri("http://localhost:8082/api/inventories")
+                .retrieve()
+                .bodyToMono(Boolean.class)
+                .block();
+
+        if (isInStock) {
+            orderRepo.save(order);
+            return "Order Placed Successfully!";
+        } else {
+            return "Product is not in stock, please try agian later!";
+        }
     }
 }

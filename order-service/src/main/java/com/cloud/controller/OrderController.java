@@ -23,8 +23,8 @@ public class OrderController {
     public ResponseEntity<?> doCreate(@RequestBody OrderRequest orderRequest) {
         try {
             log.info("----------CREATE ORDER------------");
-            orderService.create(orderRequest);
-            return new ResponseEntity<>("Order Placed Successfully!", HttpStatus.CREATED);
+            
+            return new ResponseEntity<>(orderService.create(orderRequest), HttpStatus.CREATED);
         } catch (Exception ex) {
             log.error("----------ERROR CREATE ORDER------------", ex);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
