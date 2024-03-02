@@ -17,8 +17,8 @@ public class InventoryController {
 
     private final InventoryService inventoryService;
 
-    @GetMapping("isInStock")
-    public ResponseEntity<?> checkIsInStock(@RequestParam("{sku-code}") List<String> skuCode) {
+    @GetMapping
+    public ResponseEntity<?> checkIsInStock(@RequestParam("skuCode") List<String> skuCode) {
         try {
             log.info("----------CHECK IS IN-STOCK------------");
             return ResponseEntity.ok(inventoryService.isInStock(skuCode));
